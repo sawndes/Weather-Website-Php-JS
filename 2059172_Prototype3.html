@@ -1,0 +1,295 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title  -->
+    <title>Weather</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="https://uxwing.com/wp-content/themes/uxwing/download/27-weather/weather.png">
+    <!-- Some Styling For alignment  -->
+    <style>        
+            /* Importing Built-In Google Font */
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
+            /* Inserting Body's background and aligning items center  */
+            body {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            font-family: 'Poppins', sans-serif;
+            line-height: 24px;
+            background-image: url("https://images.pexels.com/photos/1363876/pexels-photo-1363876.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
+            background-repeat: no-repeat;
+            background-size: cover;
+            }
+            /* Styling h1,h2,h5 font and aligning items */
+            h1 {
+            text-align: center;
+            font-size: 70px;
+            }
+
+            h2 {
+            text-align: center;
+            font-size: 45px;
+            }
+            
+            h5 {
+            font-size: 15px;
+            display:inline;
+            margin-left: 10px;
+            }
+            /* Styling footer margin */
+            footer {
+            margin-top: 20px;
+            text-align: center;
+            }
+            /* Adding background and blur to center card  */
+            #card {
+            color: rgba(33, 33, 33, 0.84);
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            height: 650px;
+            width: 600px;
+            color: black;
+            backdrop-filter: blur(20px);
+            }
+
+            #date {
+            margin: 0px;
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 40px;
+            }
+
+            #humidity {
+            margin-left: 20px;
+            }
+
+            #description {
+            margin-top: -5px;
+            margin-bottom: 30px;
+            }
+
+            #icon img{
+            align-items: center;
+            width: 80px;
+            margin-left: 260px;
+            }
+            .input {
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%,-50%);
+              width: 350px;
+              border: 3px solid #fff;
+              background: transparent;
+              padding: 15px 30px;
+              border-radius: 50px;
+              outline: none;
+              font-size: 18px;
+              color: #fff;
+              margin-bottom: 50px;        
+            }
+            input[type="text"] {
+             display: block;
+             margin : 0 auto;
+             margin-top: 50px;
+             margin-left: 300px;
+        }
+
+          .btn{
+          top: 21px;
+          right: 50px;
+          cursor: pointer;
+          color: #0a0501;
+          background: #fff;
+          border: 0px;
+          width: 100px;
+          height: 35px;
+          border-radius: 50px;
+          outline: none;
+          text-transform: uppercase;
+          font-weight: bold;
+          margin-left: 250px;
+          margin-top: -20px;
+          }
+          #search {
+            margin: auto;
+          }
+
+    </style>
+</head>
+<body>
+    <!-- Main Division section card which contains all the elements -->
+    <div id="card">
+      <!-- Division for search functionality -->
+      <div id="search">
+        <!-- Search Bar -->
+        <input type="text" class="input" placeholder="Search City or Country">
+        <!-- Button When Runs function run() onclick  -->
+        <input type="button" onclick="run()" value="search" class="btn">
+      </div> <!-- div search -->
+        <!-- Main Heading for location  -->
+        <h1 id="location">Weather</h1>
+        <!-- Heading for icon, temperature, description -->
+        <div id="icon"></div>
+        <h2 id="temp">Search At Search Bar</h2>     
+        <h2 id="description">Like: Worthing, London</h2>
+        <!-- Date Paragraph which contains day,month date, time -->
+        <p id="date">Enter Valid Location at Search Bar</p>
+        <!-- Footer Section -->
+        <footer>
+          <!-- Footer Section Contains humidity, wind and pressure -->
+          <h5 id="humidity"></h5>
+          <h5 id="wind"></h5>
+          <h5 id="pressure"></h5> 
+        </footer>
+      </div> <!--div card -->
+<!-- javascript code     -->
+<script>
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('2059172_Prototype3_serviceworker.js').then(function(registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }	
+  // Get the value from search bar(input)
+  var input = document.querySelector(".input");
+  // New event for search which runs function with event argument
+  input.addEventListener("keyup", function(event) {
+    // If enter is pressed in search bar 
+    if (event.keyCode === 13) {
+      // The preventDefault() method cancels the event if it is cancelable
+      event.preventDefault();
+      // Click submit button on enter which eventually runs function run()
+      document.querySelector(".btn").click();
+      }
+  });
+  // Run function run() on enter or onclick submit button 
+  function run() {
+  // Check browser cache first, use if there and less than 10 seconds old and check if searched location and local storage location is same
+  if(localStorage.when != null && parseInt(localStorage.when) + 10000 > Date.now() && input.value == localStorage.location) {
+    // update value of location to web page from localstorage.location which is city stored from last fetch
+    document.getElementById("location").innerHTML = localStorage.location;
+    // update value of location to web page from localstorage.temp which is temperature stored from last fetch
+    document.getElementById("temp").innerHTML = localStorage.temp;
+    // update value of location to web page from localstorage.description
+    document.getElementById("description").innerHTML = localStorage.description;
+    // update value of location to web page from localstorage.humidity
+    document.getElementById("humidity").innerHTML = localStorage.humidity;
+    // update value of location to web page from localstorage.wind
+    document.getElementById("wind").innerHTML = localStorage.wind;
+    // update value of location to web page from localstorage.pressure
+    document.getElementById("pressure").innerHTML = localStorage.pressure;
+    // update value of location to web page from localstorage.date
+    document.getElementById("date").innerHTML = localStorage.date;
+    // update value of location to web page from localstorage.icon
+    document.getElementById("icon").innerHTML = localStorage.icon;
+  }
+  else {
+        // Get the value from search bar which is location to fetch weather 
+        var location = document.querySelector(".input").value;
+        // Get location from searched place
+        const api = 'http://localhost/Prototype3/2059172_Prototype3.php?city='+location;
+        // Fetch from php file which is stored in sql 
+        fetch(api)
+        // Convert response string to json object
+        .then(data => data.json())
+        .then(data => {
+            // Declare Variable to add inside html
+            console.log(data);
+            var city = data.city;
+            var iconCode = data.icon;
+            var icon = "http://openweathermap.org/img/w/" + iconCode + ".png";
+            var temp = data.weather_temperature;
+            var description = data.weather_description;
+            var humidity = data.humidity;
+            var windSpeed = data.weather_wind;
+            var pressure = data.pressure;
+            var lastUpdate = data.weather_when;
+            // As date object return numeric value of month. Declare Array which returns informic month from numeric value
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+                                "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            // Calling inbuit-in date object                    
+            const d = new Date();
+            // New Array which helps to return day
+            var weekday = new Array(7);
+                weekday[0] = "SUNDAY";
+                weekday[1] = "MONDAY";
+                weekday[2] = "TUESDAY";
+                weekday[3] = "Wednesday";
+                weekday[4] = "THRUSDAY";
+                weekday[5] = "FRIDAY";
+                weekday[6] = "SATURYDAY";          
+            // Declare Varible to get the current date and time
+            var day = weekday[d.getDay()];
+            var month = (monthNames[d.getMonth()]);
+            var datee = d.getDate();
+            var hour = (d.getHours());
+            var minute = (d.getMinutes());
+            // add location (city) to location id on html 
+            document.getElementById("location").innerHTML = city;
+            // add temperature with degree celcius degree to temp id on html
+            document.getElementById("temp").innerHTML = temp + '&deg;C';
+            // add description to description id on html with proper casing
+            document.getElementById("description").innerHTML = description.charAt(0).toUpperCase() + description.slice(1);
+            // add humidity to humidity id on html
+            document.getElementById("humidity").innerHTML = 'Humidity: '+ humidity + '%';
+            // add wind speed to wind id on html
+            document.getElementById("wind").innerHTML = 'Wind Speed: '+ windSpeed + 'm/s';
+            // add pressure to pressure id on html
+            document.getElementById("pressure").innerHTML = 'Pressure: ' + pressure+'hPa';
+            // add date to date id on ht,l with day, month, day, hour and minute
+            document.getElementById("date").innerHTML = day + ' | ' + month +' '+ datee + ' | ' +hour +':'+ minute;
+            // add image icon to webpage on icon id
+            document.getElementById("icon").innerHTML = "<img src = \"http://openweathermap.org/img/w/" + iconCode + ".png\">";
+
+            // Save new data to browser cache, with new timestamp (same value as written on innerhtml)
+            // save city name to localstorage.location 
+            localStorage.location = city;
+            // save temperature to localstorage.temperature
+            localStorage.temp = temp + '&deg;C';
+            // save description to localstorage.description
+            localStorage.description = description.charAt(0).toUpperCase() + description.slice(1);
+            // save humidity to localstorage.humidity
+            localStorage.humidity = 'Humidity: '+ humidity + '%';
+            // save wind to localstorage.wind
+            localStorage.wind = 'Wind Speed: '+ windSpeed + 'm/s';
+            // save pressure to localstorage.pressure
+            localStorage.pressure = 'Pressure: ' + pressure+'hPa';
+            // save date to localstorage.date
+            localStorage.date = day + ' | ' + month +' '+ datee + ' | ' +hour +':'+ minute;
+            // save icon to localstorage.icon
+            localStorage.icon = "<img src = \"http://openweathermap.org/img/w/" + iconCode + ".png\">";
+            // save time in milliseconds to localstorage.when
+            localStorage.when = Date.now(); // milliseconds since January 1 1970
+        })
+        .catch(err => {
+          // if we fail to fetch data from live network then find if there is existing localstorage is same as location searched
+          if(localStorage.when != null && input.value == localStorage.location) {
+            // add all locally stored value to show 
+            document.getElementById("location").innerHTML = localStorage.location;
+            document.getElementById("temp").innerHTML = localStorage.temp;
+            document.getElementById("description").innerHTML = localStorage.description;
+            document.getElementById("humidity").innerHTML = localStorage.humidity;
+            document.getElementById("wind").innerHTML = localStorage.wind;
+            document.getElementById("pressure").innerHTML = localStorage.pressure;
+            document.getElementById("date").innerHTML = localStorage.date;
+            document.getElementById("icon").innerHTML = localStorage.icon;
+          }
+          // else if there is no locally stored data
+          else {
+            // Displays error in console
+            console.log(err);
+          }
+        })
+    }  
+    } 
+</script> 
+</body>
+</html>
